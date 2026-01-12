@@ -1,0 +1,12 @@
+.env
+.idea
+k8s/
+.github/
+.git/
+.gitignore
+.dockerignore
+.gitattributes
+.editorconfig
+Dockerfile.dev
+docker-compose.yml
+docker-compose.*.yml

@@ -9,7 +9,7 @@ on:
 
 env:
   DOCKER_IMAGE: skinpro/skin-pro-backend
-  K8S_APP_DIR: /app/k8s
+  K8S_APP_DIR: ~/app/k8s
 
 
 jobs:
@@ -72,10 +72,10 @@ jobs:
           username: ${{ secrets.K8S_MASTER_USER }}
           key: ${{ secrets.K8S_MASTER_SSH_KEY }}
           script: |
-            cd ${{ env.K8S_APP_DIR }}
+            set -e
             # Применяем deployment и service
-            kubectl apply -f deployment.yaml
-            kubectl apply -f service.yaml
+            kubectl apply -f ${{ env.K8S_APP_DIR }}/deployment.yaml
+            kubectl apply -f ${{ env.K8S_APP_DIR }}/service.yaml
             # Ждем готовности deployment
             kubectl rollout status deployment/skin-pro-app --timeout=60s
             # Показываем статус
