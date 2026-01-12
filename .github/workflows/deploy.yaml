@@ -56,7 +56,7 @@ jobs:
             # Создаем директорию
             mkdir -p ${{ env.K8S_APP_DIR }}
             # Копируем k8s/ из репозитория
-            cp -r $GITHUB_WORKSPACE/k8s/* ${{ env.K8S_APP_DIR }}/
+            cp -r $GITHUB_WORKSPACE/k8s/ ${{ env.K8S_APP_DIR }}/
             # Создаем .env из секрета
             cat << 'EOF' > ${{ env.K8S_APP_DIR }}/.env
             ${{ secrets.ENV_FILE }}
