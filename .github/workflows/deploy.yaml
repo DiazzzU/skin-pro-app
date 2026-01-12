@@ -47,13 +47,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Copy k8s folder
-        uses: appleboy/scp-action@v0.1.0
-        with:
-          host: ${{ secrets.K8S_MASTER_HOST }}
-          username: ${{ secrets.K8S_MASTER_USER }}
-          key: ${{ secrets.K8S_MASTER_SSH_KEY }}
-          src: ./k8s/
-          dest: ${{ env.K8S_APP_DIR }}
+        run: |
+          scp -o StrictHostKeyChecking=no \
+              -i "${{ secrets.K8S_MASTER_SSH_KEY }}" \
+              ${{ github.workspace }}/k8s/* \
+              ${{ secrets.K8S_MASTER_USER }}@${{ secrets.K8S_MASTER_HOST }}:${{ env.K8S_APP_DIR }}
 
       - name: Copy .env to server
         uses: appleboy/ssh-action@v1.0.3
