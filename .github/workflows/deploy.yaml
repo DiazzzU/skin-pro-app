@@ -3,9 +3,9 @@ name: Go App CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   DOCKER_IMAGE: skinpro/skin-pro-backend
