@@ -52,7 +52,6 @@ jobs:
           host: ${{ secrets.K8S_MASTER_HOST }}
           username: ${{ secrets.K8S_MASTER_USER }}
           key: ${{ secrets.K8S_MASTER_SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
           src: k8s/*
           dest: ${{ env.K8S_APP_DIR }}
 
