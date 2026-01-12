@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skin-pro-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: skin-pro
+  template:
+    metadata:
+      labels:
+        app: skin-pro
+    spec:
+      containers:
+        - name: app
+          image: skinpro/skin-pro-backend:latest
+          ports:
+            - containerPort: 8080
+          workingDir: /app
+          env:
+            - name: APP_ENV
+              value: "production"
+          volumeMounts:
+            - name: app-properties
+              mountPath: /app/.env
+              subPath: .env
+              readOnly: true
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: app-properties
+          secret:
+            secretName: app-properties
+            items:
+              - key: .env
+                path: .env
