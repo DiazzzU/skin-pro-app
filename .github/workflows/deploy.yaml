@@ -55,8 +55,8 @@ jobs:
           host: ${{ secrets.K8S_MASTER_HOST }}
           username: ${{ secrets.K8S_MASTER_USER }}
           key: ${{ secrets.K8S_MASTER_SSH_KEY }}
-          src: ./k8s/
-          dest: ${{ env.K8S_APP_DIR }}
+          source: k8s/*
+          target: ${{ env.K8S_APP_DIR }}
 
       - name: Copy .env to server
         uses: appleboy/ssh-action@v1.0.3
