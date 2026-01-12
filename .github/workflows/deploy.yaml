@@ -89,7 +89,12 @@ jobs:
             # Применяем deployment и service
             kubectl apply -f ${{ env.K8S_APP_DIR }}/deployment.yaml
             kubectl apply -f ${{ env.K8S_APP_DIR }}/service.yaml
+            
+            # Принудительно обновляем поды (изменяет аннотацию)
+            kubectl rollout restart deployment/skin-pro-app
+            
             # Ждем готовности deployment
             kubectl rollout status deployment/skin-pro-app --timeout=60s
+            
             # Показываем статус
             kubectl get pods,services -o wide
