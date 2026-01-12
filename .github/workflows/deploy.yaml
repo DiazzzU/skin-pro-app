@@ -46,7 +46,17 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Copy k8s folder and .env to server
+      - name: Copy k8s folder
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ secrets.K8S_MASTER_HOST }}
+          username: ${{ secrets.K8S_MASTER_USER }}
+          key: ${{ secrets.K8S_MASTER_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          src: k8s/*
+          dest: ${{ env.K8S_APP_DIR }}
+
+      - name: Copy .env to server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.K8S_MASTER_HOST }}
