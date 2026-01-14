@@ -7,8 +7,11 @@ import (
 	"Learning/internal/service"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthHandler struct {
@@ -25,10 +28,14 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	passwordHash, err := h.hashPassword(req.Password)
+	if err != nil {
+		return
+	}
 	u := model.User{
 		Login:    req.Login,
 		Name:     req.Name,
-		Password: req.Password,
+		Password: passwordHash,
 	}
 	if err := h.userService.Create(r.Context(), &u); err != nil {
 		if errors.Is(err, service.ErrUserAlreadyExists) {
@@ -43,11 +50,13 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	req, err := helper.DecodeJSONBody[requests.LoginRequest](w, r)
 	if err != nil {
+		slog.Error("Not correct request body", "error", err)
 		http.Error(w, "invalid input", http.StatusBadRequest)
 	}
 
 	accessToken, refreshToken, err := h.authService.Login(r.Context(), req.Login, req.Password)
 	if err != nil {
+		slog.Error("Failed to generate new tokens", "error", err)
 		http.Error(w, "invalid credentials", http.StatusUnauthorized)
 		return
 	}
@@ -57,11 +66,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("refresh_token")
 	if err != nil || cookie.Value == "" {
+		slog.Error("Refresh token does not exists")
 		http.Error(w, "no refresh token", http.StatusUnauthorized)
 		return
 	}
 	accessToken, newRefreshToken, err := h.authService.RefreshToken(r.Context(), cookie.Value)
 	if err != nil {
+		slog.Error("Failed to generate new tokens", "error", err)
 		http.Error(w, "invalid refresh", http.StatusUnauthorized)
 		return
 	}
@@ -79,8 +90,17 @@ func (h *AuthHandler) setTokens(w http.ResponseWriter, accessToken string, refre
 		SameSite: http.SameSiteStrictMode,
 	})
 
+	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(map[string]string{"access_token": accessToken})
 	if err != nil {
 		return
 	}
+}
+
+func (h *AuthHandler) hashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }

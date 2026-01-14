@@ -10,7 +10,6 @@ import (
 
 func NewUserRouter(userHandler *handler.UserHandler, cfg *config.GlobalConfig) UserRouter {
 	r := chi.NewRouter()
-
 	r.Group(func(protected chi.Router) {
 		protected.Use(auth.JWTMiddleware(cfg.JWTSecret))
 		protected.Get("/info", userHandler.GetUserInfo) // GET /users/{id}

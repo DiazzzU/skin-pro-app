@@ -7,6 +7,9 @@ import (
 	"Learning/internal/repository"
 	"context"
 	"errors"
+	"log/slog"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 var ErrInvalidCredentials = errors.New("invalid credentials")
@@ -22,8 +25,10 @@ func NewAuthService(u *repository.UserRepository, ut *repository.UserTokenReposi
 }
 
 func (s *AuthService) Login(ctx context.Context, username string, password string) (accessToken string, refreshToken string, err error) {
+	slog.Info("Trying to login", "username", username)
 	user, err := s.userRepo.GetByLogin(ctx, username)
-	if err != nil || user.Password != password {
+	if err != nil || !s.checkPasswordHash(password, user.Password) {
+		slog.Error("Invalid credentials", "username", username)
 		return "", "", ErrInvalidCredentials
 	}
 	return s.generateToken(ctx, user.ID)
@@ -32,6 +37,7 @@ func (s *AuthService) Login(ctx context.Context, username string, password strin
 func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (accessToken string, newRefreshToken string, err error) {
 	rt, err := s.userTokenRepo.GetByRefreshToken(ctx, refreshToken)
 	if err != nil {
+		slog.Error("Failed to get refresh token", "error", err)
 		return "", "", err
 	}
 	accessToken, newRefreshToken, err = s.generateToken(ctx, rt.UserID)
@@ -57,4 +63,9 @@ func (s *AuthService) generateToken(ctx context.Context, userID int64) (accessTo
 		return "", "", err
 	}
 	return accessToken, refreshToken, nil
+}
+
+func (s *AuthService) checkPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

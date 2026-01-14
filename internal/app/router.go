@@ -11,6 +11,7 @@ type AuthRouter http.Handler
 
 func NewRouter(userRouter UserRouter, authRouter AuthRouter) *chi.Mux {
 	r := chi.NewRouter()
+	r.Use(LoggingMiddleware)
 	r.Mount("/users", userRouter)
 	r.Mount("/auth", authRouter)
 	return r

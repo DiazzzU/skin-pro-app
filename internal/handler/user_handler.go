@@ -3,6 +3,7 @@ package handler
 import (
 	"Learning/internal/auth"
 	"Learning/internal/config"
+	"Learning/internal/handler/responses"
 	"Learning/internal/service"
 	"encoding/json"
 	"net/http"
@@ -24,8 +25,13 @@ func (h *UserHandler) GetUserInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "user not found", http.StatusNotFound)
 		return
 	}
+	userInfo := responses.UserInfo{
+		ID:    u.ID,
+		Login: u.Login,
+		Name:  u.Name,
+	}
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(u)
+	err = json.NewEncoder(w).Encode(userInfo)
 	if err != nil {
 		return
 	}
