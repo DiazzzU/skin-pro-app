@@ -1,7 +1,7 @@
 package app
 
 import (
-	"Learning/internal/handler"
+	"skin-pro-app/internal/handler"
 
 	"github.com/go-chi/chi/v5"
 )

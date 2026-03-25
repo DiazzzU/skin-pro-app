@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"Learning/internal/auth"
-	"Learning/internal/config"
-	"Learning/internal/handler/responses"
-	"Learning/internal/service"
 	"encoding/json"
 	"net/http"
+	"skin-pro-app/internal/auth"
+	"skin-pro-app/internal/config"
+	"skin-pro-app/internal/handler/responses"
+	"skin-pro-app/internal/service"
 )
 
 type UserHandler struct {

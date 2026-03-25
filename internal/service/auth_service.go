@@ -1,13 +1,13 @@
 package service
 
 import (
-	"Learning/internal/auth"
-	"Learning/internal/config"
-	"Learning/internal/model"
-	"Learning/internal/repository"
 	"context"
 	"errors"
 	"log/slog"
+	"skin-pro-app/internal/auth"
+	"skin-pro-app/internal/config"
+	"skin-pro-app/internal/model"
+	"skin-pro-app/internal/repository"
 
 	"golang.org/x/crypto/bcrypt"
 )

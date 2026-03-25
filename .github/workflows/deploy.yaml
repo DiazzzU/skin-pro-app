@@ -42,8 +42,48 @@ jobs:
           cache-to: type=gha,mode=max
 
 
-  deploy:
+  migrate:
     needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy k8s folder
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.K8S_MASTER_HOST }}
+          username: ${{ secrets.K8S_MASTER_USER }}
+          key: ${{ secrets.K8S_MASTER_SSH_KEY }}
+          source: k8s/*
+          target: ${{ env.K8S_APP_DIR }}
+          strip_components: 1
+
+      - name: Run migrations
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.K8S_MASTER_HOST }}
+          username: ${{ secrets.K8S_MASTER_USER }}
+          key: ${{ secrets.K8S_MASTER_SSH_KEY }}
+          script: |
+            set -e
+            
+            # Удаляем старый job если есть
+            kubectl delete job skin-pro-migrations --ignore-not-found=true
+            
+            # Применяем migration job
+            kubectl apply -f ${{ env.K8S_APP_DIR }}/migration-job.yaml
+            
+            # Ждём завершения миграций (5 минут максимум)
+            kubectl wait job/skin-pro-migrations \
+              --for=condition=complete \
+              --timeout=300s
+            
+            echo "Migrations completed successfully"
+
+
+  deploy:
+    needs: migrate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

@@ -7,13 +7,13 @@
 package di
 
 import (
-	"Learning/internal/app"
-	"Learning/internal/config"
-	"Learning/internal/handler"
-	"Learning/internal/repository"
-	"Learning/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"skin-pro-app/internal/app"
+	"skin-pro-app/internal/config"
+	"skin-pro-app/internal/handler"
+	"skin-pro-app/internal/repository"
+	"skin-pro-app/internal/service"
 )
 
 // Injectors from wire.go:

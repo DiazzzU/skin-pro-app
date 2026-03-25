@@ -1,9 +1,9 @@
 package app
 
 import (
-	"Learning/internal/auth"
-	"Learning/internal/config"
-	"Learning/internal/handler"
+	"skin-pro-app/internal/auth"
+	"skin-pro-app/internal/config"
+	"skin-pro-app/internal/handler"
 
 	"github.com/go-chi/chi/v5"
 )

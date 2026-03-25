@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"Learning/internal/handler/requests"
-	"Learning/internal/helper"
-	"Learning/internal/model"
-	"Learning/internal/service"
 	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
+	"skin-pro-app/internal/handler/requests"
+	"skin-pro-app/internal/helper"
+	"skin-pro-app/internal/model"
+	"skin-pro-app/internal/service"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"

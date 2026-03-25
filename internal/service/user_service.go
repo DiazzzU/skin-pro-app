@@ -1,10 +1,10 @@
 package service
 
 import (
-	"Learning/internal/model"
-	"Learning/internal/repository"
 	"context"
 	"errors"
+	"skin-pro-app/internal/model"
+	"skin-pro-app/internal/repository"
 )
 
 var ErrUserAlreadyExists = errors.New("user with such login already exists")
