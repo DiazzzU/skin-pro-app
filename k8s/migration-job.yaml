@@ -1,27 +1,19 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: skin-pro-app
+  name: skin-pro-migrations
 spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: skin-pro
+  completions: 1
+  parallelism: 1
+  ttlSecondsAfterFinished: 3600
   template:
-    metadata:
-      labels:
-        app: skin-pro
     spec:
+      restartPolicy: Never
       containers:
-        - name: app
+        - name: migrations
           image: skinpro/skin-pro-backend:latest
-          command: ["./myapp", "serve"]
-          ports:
-            - containerPort: 8080
+          command: ["./myapp", "migrate"]
           workingDir: /app
-          env:
-            - name: APP_ENV
-              value: "production"
           volumeMounts:
             - name: app-properties
               mountPath: /app/.env
@@ -29,8 +21,8 @@ spec:
               readOnly: true
           resources:
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "128Mi"
+              cpu: "200m"
       volumes:
         - name: app-properties
           secret:
